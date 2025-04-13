@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DDoS Trigger Test</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        margin-top: 100px;
+      }
+
+      button {
+        font-size: 1.5rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      #response {
+        margin-top: 30px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DDoS Trigger Demo</h1>
+    <button onclick="registerVisit()">Trigger Single Visit</button>
+    <button onclick="spam()">Trigger Multiple Visit</button>
+
+    <div id="response"></div>
+
+    <script>
+      function spam() {
+        for (i = 0; i < 20; i++) {
+          registerVisit();
+        }
+        alert("Spamming 20 times! This IP will be blocked for some time.");
+      }
+      function registerVisit() {
+        fetch("http://localhost:8080/") // Replace with your actual backend URL
+          .then((res) => {
+            if (res.status === 403) {
+              return res.text().then((text) => {
+                document.getElementById("response").textContent = "⛔ " + text;
+              });
+            } else {
+              return res.json().then((data) => {
+                document.getElementById("response").textContent =
+                  "✅ " + data.message;
+              });
+            }
+          })
+          .catch((err) => {
+            document.getElementById("response").textContent =
+              "❌ Server error: " + err;
+          });
+      }
+    </script>
+  </body>
+</html>
